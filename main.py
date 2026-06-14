@@ -7,19 +7,36 @@
 # FFmpeg must be installed and available in PATH.
 
 import os
-import time
-import random
 import asyncio
-from collections import defaultdict, deque
-
+from aiohttp import web
 import discord
-from discord import guild
 from discord.ext import commands
-# from discord import app_commands  # not used
-from dotenv import load_dotenv
-import yt_dlp
 
-load_dotenv()
+# ... Your existing bot initialization config ...
+bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
+
+# 1. Add this dummy health-check endpoint for Render
+async def handle(request):
+    return web.Response(text="Bot is alive!")
+
+async def main():
+    # 2. Start the web server so Render binds the port successfully
+    app = web.Application()
+    app.router.add_get('/', handle)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    
+    port = int(os.environ.get("PORT", 10000))
+    site = web.TCPSite(runner, '0.0.0.0', port)
+    await site.start()
+    print(f"Web server started on port {port}")
+    
+    # 3. Start your Discord bot right after
+    # Replace with your token variable / environment variable
+    await bot.start(os.environ.get("DISCORD_TOKEN")) 
+
+if __name__ == "__main__":
+    asyncio.run(main())
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 
