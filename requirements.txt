@@ -3,3 +3,6 @@ yt-dlp>=2026.6.9
 PyNaCl>=1.6.2
 python-dotenv>=1.2.2
 davey>=0.1.0
+discord.py[voice]
+davey
+aiohttp
